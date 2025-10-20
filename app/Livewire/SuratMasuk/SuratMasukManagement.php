@@ -205,6 +205,9 @@ class SuratMasukManagement extends Component
             session()->flash('message', 'Surat berhasil ditambahkan.');
         }
 
+        // dispatch supaya kompenen notifikasi refhresh
+        $this->dispatch('suratMasukUpdated');
+
         $this->closeModal();
         $this->resetForm();
     }
@@ -225,6 +228,9 @@ class SuratMasukManagement extends Component
 
         $surat->delete();
         session()->flash('message', 'Surat berhasil dihapus.');
+
+        // dispatch supaya komponen notifikasi refresh
+        $this->dispatch('suratMasukUpdated');
     }
 
     // Modal controls
