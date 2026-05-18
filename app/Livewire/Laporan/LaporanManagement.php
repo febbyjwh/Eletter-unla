@@ -3,18 +3,19 @@
 namespace App\Livewire\Laporan;
 
 use Livewire\Component;
-use App\Models\SuratMasuk;
-use App\Models\SuratKeluar;
+use App\Models\Arsip;
 
 class LaporanManagement extends Component
 {
-    public $totalSuratMasuk;
-    public $totalSuratKeluar;
+    public int $totalSuratMasuk;
+    public int $totalSuratKeluar;
+    public int $totalArsip;
 
-    public function mount()
+    public function mount(): void
     {
-        $this->totalSuratMasuk = SuratMasuk::count();
-        $this->totalSuratKeluar = SuratKeluar::count();
+        $this->totalSuratMasuk = Arsip::where('jenis_surat', 'masuk')->count();
+        $this->totalSuratKeluar = Arsip::where('jenis_surat', 'keluar')->count();
+        $this->totalArsip = Arsip::count();
     }
 
     public function render()

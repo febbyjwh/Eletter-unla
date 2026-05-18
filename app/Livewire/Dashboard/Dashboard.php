@@ -4,8 +4,9 @@ namespace App\Livewire\Dashboard;
 
 use Livewire\Component;
 use Illuminate\Support\Facades\DB;
-use App\Models\SuratMasuk;
-use App\Models\SuratKeluar;
+// use App\Models\SuratMasuk;
+// use App\Models\SuratKeluar;
+use App\Models\Arsip;
 use App\Models\Disposisi;
 
 class Dashboard extends Component
@@ -28,15 +29,24 @@ class Dashboard extends Component
     /**
      * Lifecycle mount — dijalankan saat komponen pertama kali dimuat
      */
+
     public function mount()
     {
+        // dd([
+        //     'user' => auth()->user(),
+        //     'role' => auth()->user()?->role,
+        //     'permissions_relation' => auth()->user()?->role?->permissions,
+        //     'permissions_array' => auth()->user()?->role?->permissions?->pluck('name'),
+        // ]);
+        // dd(auth()->user()->roles);
+        
         // 🔸 Hitung jumlah surat masuk, keluar, dan disposisi
-        $this->jumlahSuratMasuk = SuratMasuk::count();
-        $this->jumlahSuratKeluar = SuratKeluar::count();
+        $this->jumlahSuratMasuk = Arsip::where('jenis_surat', 'masuk')->count();
+        $this->jumlahSuratKeluar = Arsip::where('jenis_surat', 'keluar')->count();
         $this->jumlahDisposisi = Disposisi::count();
 
         // 🔸 Ambil data untuk statistik surat masuk bulanan (bar chart)
-        $dataBulanan = DB::table('surat_masuk')
+        $dataBulanan = DB::table('arsip')
             ->select(
                 DB::raw('MONTH(tanggal) as bulan'),
                 DB::raw('COUNT(*) as total')
@@ -87,7 +97,7 @@ class Dashboard extends Component
         ];
 
         // 🔸 Surat masuk terbaru
-        $this->suratTerbaru = SuratMasuk::orderBy('tanggal', 'desc')
+        $this->suratTerbaru = Arsip::orderBy('tanggal', 'desc')
             ->take(5)
             ->get(['no_surat', 'pengirim', 'perihal', 'tanggal']);
     }

@@ -16,7 +16,7 @@
         </li>
       @endif
 
-      @if(auth()->user()->hasPermission('manage_letters_in'))
+      {{-- @if(auth()->user()->hasPermission('manage_letters_in'))
         <li>
           <a href="{{ route('manajemen-suratmasuk') }}" 
              class="flex items-center gap-3 px-2 py-1 rounded-md 
@@ -32,6 +32,16 @@
              class="flex items-center gap-3 px-2 py-1 rounded-md 
              {{ request()->is('manajemen-suratkeluar') ? 'bg-blue-100 text-blue-600 font-semibold' : 'text-gray-700 hover:text-blue-500' }}">
             📤 <span>Surat Keluar</span>
+          </a>
+        </li>
+      @endif --}}
+
+      @if (auth()->user()->hasPermission('manage_letters'))
+           <li>
+          <a href="{{ route('arsip.admin') }}" 
+             class="flex items-center gap-3 px-2 py-1 rounded-md 
+             {{ request()->is('arsip.admin') ? 'bg-blue-100 text-blue-600 font-semibold' : 'text-gray-700 hover:text-blue-500' }}">
+            📤 <span>Arsip</span>
           </a>
         </li>
       @endif

@@ -8,12 +8,12 @@
     @endif
 
     <!-- Tombol Tambah -->
-    @can('manage_roles')
+    @if (auth()->user()->hasPermission('manage_roles'))
         <button wire:click="openModal(false)"
             class="bg-gradient-to-r from-blue-400 to-blue-500 text-white px-4 py-2 rounded-xl mb-5 text-sm sm:text-base shadow hover:from-blue-500 hover:to-blue-600 transition-all duration-200">
             + Tambah Role
         </button>
-    @endcan
+    @endif
 
     <!-- Filter & Controls -->
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-3">
