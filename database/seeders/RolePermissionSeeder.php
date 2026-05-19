@@ -95,7 +95,7 @@ class RolePermissionSeeder extends Seeder
             ],
             [
                 'name' => 'Superadmin',
-                'email' => 'spdmin@gmail.com',
+                'email' => 'spadmin@gmail.com',
                 'password' => Hash::make('password'),
                 'created_at' => Carbon::parse('2025-09-10 04:19:59'),
                 'updated_at' => Carbon::parse('2025-09-10 04:19:59'),
