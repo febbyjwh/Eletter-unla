@@ -17,6 +17,10 @@ return new class extends Migration
             $table->string('email');
             $table->string('password');
             $table->integer('role_id');
+            $table->longText('google_access_token')->nullable();
+            $table->longText('google_refresh_token')->nullable();
+            $table->timestamp('google_token_expires_at')->nullable();
+            $table->string('google_drive_folder_id')->nullable();
             $table->timestamps();
         });
     }

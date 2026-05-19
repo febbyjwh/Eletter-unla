@@ -75,18 +75,53 @@
                             @endif
                         </td>
 
-                        <td class="p-3">{{ $item->pengirim }}</td>
-                        <td class="p-3">{{ $item->penerima }}</td>
-                        <td class="p-3">{{ $item->perihal }}</td>
+                        {{-- Pengirim --}}
                         <td class="p-3">
-                            {{ \Carbon\Carbon::parse($item->tanggal)->format('d M Y') }}
+                            {{ $item->pengirim }}
                         </td>
+
+                        {{-- Penerima --}}
+                        <td class="p-3">
+                            {{ $item->penerima }}
+                        </td>
+
+                        {{-- Perihal + metadata --}}
+                        <td class="p-3">
+                            <div class="font-medium text-gray-800">
+                                {{ $item->perihal }}
+                            </div>
+
+                            <div class="text-xs text-gray-400 mt-1">
+                                dibuat oleh
+                                <span class="font-medium">
+                                    {{ optional($item->creator)->name ?? 'System' }}
+                                </span>
+                            </div>
+                        </td>
+
+                        {{-- Tanggal + update info --}}
+                        <td class="p-3">
+                            <div class="text-gray-800">
+                                {{ \Carbon\Carbon::parse($item->tanggal)->translatedFormat('d M Y') }}
+                            </div>
+
+                            <div class="text-xs text-gray-600 mt-1">
+                                update {{ $item->updated_at->diffForHumans() }}
+                            </div>
+
+                            <div class="text-[11px] text-gray-500">
+                                create {{ $item->updated_at->format('H:i') }}
+                            </div>
+                        </td>
+                        {{-- <td class="p-3">
+                            {{ \Carbon\Carbon::parse($item->tanggal)->format('d M Y') }}
+                        </td> --}}
 
                         <td class="p-3">
                             @if ($item->file_surat)
                                 <a href="{{ Storage::url($item->file_surat) }}" target="_blank"
-                                    class="text-blue-500 underline">
-                                    📄 Lihat
+                                    class="font-medium text-blue-500">
+                                    📄 Preview
                                 </a>
                             @else
                                 <span class="text-gray-400">-</span>
