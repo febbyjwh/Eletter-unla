@@ -21,14 +21,14 @@ class ArsipAdmin extends Component
     public $arsipId;
 
     // form fields
-    public $jenis_surat, $no_surat, $pengirim, $penerima, $perihal, $tanggal, $file_surat, $new_file;
+    public $jenis_surat, $no_surat, $pengirim, $penerima, $perihal, $tanggal;
+    public $file_surat, $new_file;
 
     public function updatingSearch()
     {
         $this->resetPage();
     }
 
-    // OPEN CREATE
     public function openModal()
     {
         $this->resetForm();
@@ -36,25 +36,13 @@ class ArsipAdmin extends Component
         $this->isModalOpen = true;
     }
 
-    // OPEN EDIT
-    public function edit($id)
+    public function closeModal()
     {
-        $arsip = Arsip::findOrFail($id);
-
-        $this->arsipId = $arsip->id;
-        $this->jenis_surat = $arsip->jenis_surat;
-        $this->no_surat = $arsip->no_surat;
-        $this->pengirim = $arsip->pengirim;
-        $this->penerima = $arsip->penerima;
-        $this->perihal = $arsip->perihal;
-        $this->tanggal = $arsip->tanggal;
-        $this->file_surat = $arsip->file_surat;
-
-        $this->isEdit = true;
-        $this->isModalOpen = true;
+        $this->isModalOpen = false;
+        $this->resetForm();
     }
 
-    // SAVE (CREATE / UPDATE)
+
     public function save()
     {
         $this->validate([
@@ -70,60 +58,81 @@ class ArsipAdmin extends Component
 
         // upload file baru
         if ($this->new_file) {
+            if ($this->isEdit && $this->file_surat) {
+                Storage::disk('public')->delete($this->file_surat);
+            }
+
             $filePath = $this->new_file->store('arsip', 'public');
         }
 
+        $data = [
+            'jenis_surat' => $this->jenis_surat,
+            'no_surat' => $this->no_surat,
+            'pengirim' => $this->pengirim,
+            'penerima' => $this->penerima,
+            'perihal' => $this->perihal,
+            'tanggal' => $this->tanggal,
+            'file_surat' => $filePath,
+        ];
+
         if ($this->isEdit) {
-            Arsip::find($this->arsipId)->update([
-                'jenis_surat' => $this->jenis_surat,
-                'no_surat' => $this->no_surat,
-                'pengirim' => $this->pengirim,
-                'penerima' => $this->penerima,
-                'perihal' => $this->perihal,
-                'tanggal' => $this->tanggal,
-                'file_surat' => $filePath,
-            ]);
+
+            Arsip::find($this->arsipId)->update($data);
 
             session()->flash('message', 'Arsip berhasil diupdate');
         } else {
-            Arsip::create([
-                'jenis_surat' => $this->jenis_surat,
-                'no_surat' => $this->no_surat,
-                'pengirim' => $this->pengirim,
-                'penerima' => $this->penerima,
-                'perihal' => $this->perihal,
-                'tanggal' => $this->tanggal,
-                'file_surat' => $filePath,
+
+            Arsip::create(array_merge($data, [
                 'user_id' => auth()->id(),
                 'created_by' => auth()->id(),
                 'updated_by' => auth()->id(),
                 'created_role_id' => auth()->user()->role_id,
                 'updated_role_id' => auth()->user()->role_id,
-            ]);
+            ]));
 
             session()->flash('message', 'Arsip berhasil ditambahkan');
         }
 
+        $this->dispatch('arsipUpdated');
+
         $this->closeModal();
     }
 
-    // DELETE
+    public function edit($id)
+    {
+        $arsip = Arsip::findOrFail($id);
+
+        $this->arsipId = $arsip->id;
+        $this->jenis_surat = $arsip->jenis_surat;
+        $this->no_surat = $arsip->no_surat;
+        $this->pengirim = $arsip->pengirim;
+        $this->penerima = $arsip->penerima;
+        $this->perihal = $arsip->perihal;
+        $this->tanggal = $arsip->tanggal;
+
+        // simpan file lama (jangan langsung overwrite)
+        $this->file_surat = $arsip->file_surat;
+        $this->new_file = null;
+
+        $this->isEdit = true;
+        $this->isModalOpen = true;
+    }
+
     public function delete($id)
     {
         $arsip = Arsip::findOrFail($id);
 
-        if ($arsip->file_surat) {
+        // hapus file kalau ada
+        if ($arsip->file_surat && Storage::disk('public')->exists($arsip->file_surat)) {
             Storage::disk('public')->delete($arsip->file_surat);
         }
 
         $arsip->delete();
 
         session()->flash('message', 'Arsip berhasil dihapus');
-    }
 
-    public function closeModal()
-    {
-        $this->isModalOpen = false;
+        // refresh komponen (kalau ada live update)
+        $this->dispatch('arsipUpdated');
     }
 
     public function resetForm()
@@ -139,6 +148,8 @@ class ArsipAdmin extends Component
             'file_surat',
             'new_file',
         ]);
+
+        $this->isEdit = false;
     }
 
     public function render()
