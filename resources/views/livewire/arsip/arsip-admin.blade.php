@@ -120,7 +120,7 @@
                         <td class="p-3">
                             @if ($item->file_surat)
                                 <a href="{{ Storage::url($item->file_surat) }}" target="_blank"
-                                    class="font-medium text-blue-500">
+                                    class="font-medium text-blue-500 hover-blue-600">
                                     📄 Preview
                                 </a>
                             @else
