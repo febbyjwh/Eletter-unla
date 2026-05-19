@@ -95,11 +95,13 @@
 
                         <td class="p-3 flex gap-2">
 
-                            <button class="px-3 py-1 text-xs bg-yellow-400 text-white rounded-xl hover:bg-yellow-500" wire:click="edit({{ $item->id }})">
+                            <button class="px-3 py-1 text-xs bg-yellow-400 text-white rounded-xl hover:bg-yellow-500"
+                                wire:click="edit({{ $item->id }})">
                                 ✏️ Edit
                             </button>
 
-                            <button class="px-3 py-1 text-xs bg-red-500 text-white rounded-xl hover:bg-red-600" wire:click="delete({{ $item->id }})">
+                            <button class="px-3 py-1 text-xs bg-red-500 text-white rounded-xl hover:bg-red-600"
+                                wire:click="delete({{ $item->id }})">
                                 🗑️ Hapus
                             </button>
 
@@ -156,14 +158,36 @@
                     <input type="date" wire:model="tanggal" class="w-full border rounded-xl p-2">
 
                     <!-- File -->
-                    <input type="file" wire:model="new_file" class="w-full border rounded-xl p-2">
+                    {{-- <input type="file" wire:model="new_file" class="w-full border rounded-xl p-2">
 
                     @if ($file_surat)
                         <a href="{{ Storage::url($file_surat) }}" target="_blank"
                             class="text-blue-500 text-sm underline">
                             📄 File lama
                         </a>
-                    @endif
+                    @endif --}}
+
+                    <!-- File -->
+                    <div>
+                        <input type="file" wire:model="new_file" class="w-full border rounded-xl p-2">
+
+                        {{-- Loading upload --}}
+                        <div wire:loading wire:target="new_file" class="text-blue-500 text-sm mt-1">
+                            ⏳ Uploading file...
+                        </div>
+
+                        {{-- Preview file lama --}}
+                        <td class="p-3">
+                            @if ($item->file_surat)
+                                <a href="{{ asset('storage/' . $item->file_surat) }}" target="_blank"
+                                    class="text-blue-500 underline">
+                                    📄 Lihat
+                                </a>
+                            @else
+                                <span class="text-gray-400">-</span>
+                            @endif
+                        </td>
+                    </div>
 
                     <!-- Action -->
                     <div class="flex justify-end gap-2 pt-3">

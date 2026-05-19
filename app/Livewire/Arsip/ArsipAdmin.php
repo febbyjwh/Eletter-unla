@@ -51,18 +51,29 @@ class ArsipAdmin extends Component
             'pengirim' => 'required',
             'penerima' => 'required',
             'perihal' => 'required',
-            'tanggal' => 'required',
+            'tanggal' => 'required|date',
+            'new_file' => 'nullable|file|mimes:pdf,doc,docx|max:5120',
         ]);
 
+        // default pakai file lama
         $filePath = $this->file_surat;
 
         // upload file baru
         if ($this->new_file) {
+
+            // kalau edit & ada file lama → hapus file lama
             if ($this->isEdit && $this->file_surat) {
                 Storage::disk('public')->delete($this->file_surat);
             }
 
-            $filePath = $this->new_file->store('arsip', 'public');
+            // simpan file baru
+            $fileName = time() . '_' . $this->new_file->getClientOriginalName();
+
+            $filePath = $this->new_file->storeAs(
+                'arsip',
+                $fileName,
+                'public'
+            );
         }
 
         $data = [
@@ -76,7 +87,7 @@ class ArsipAdmin extends Component
         ];
 
         if ($this->isEdit) {
-
+            // dd($this->new_file);
             Arsip::find($this->arsipId)->update($data);
 
             session()->flash('message', 'Arsip berhasil diupdate');
