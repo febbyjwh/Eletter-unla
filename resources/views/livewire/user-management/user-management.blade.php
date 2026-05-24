@@ -9,7 +9,7 @@
     @endif
 
     <!-- Tombol Tambah -->
-    <button wire:click="openModal(false)"
+    <button wire:click="createUser"
         class="bg-gradient-to-r from-blue-400 to-blue-500 text-white px-4 py-2 rounded-xl mb-5 text-sm sm:text-base shadow hover:from-blue-500 hover:to-blue-600 transition-all duration-200">
         + Tambah User
     </button>
@@ -49,6 +49,9 @@
                     <th class="p-3 text-left hidden sm:table-cell cursor-pointer" wire:click="sortBy('email')">
                         Email {!! $sortField === 'email' ? ($sortDirection === 'asc' ? '⬆️' : '⬇️') : '' !!}
                     </th>
+                    <th class="p-3 text-left cursor-pointer" wire:click="sortBy('unit')">
+                        Unit {!! $sortField === 'unit' ? ($sortDirection === 'asc' ? '⬆️' : '⬇️') : '' !!}
+                    </th>
                     <th class="p-3 text-left">Role</th>
                     <th class="p-3 text-left">Aksi</th>
                 </tr>
@@ -59,6 +62,7 @@
                         <td class="p-3">{{ $users->firstItem() + $index }}</td>
                         <td class="p-3 font-medium">{{ $user->name }}</td>
                         <td class="p-3 hidden sm:table-cell">{{ $user->email }}</td>
+                        <td class="p-3">{{ $user->unit ?: '-' }}</td>
                         <td class="p-3">
                             <span class="px-2 py-1 rounded-full text-xs
                                 {{ ($user->role?->name ?? '-') === 'Admin' ? 'bg-red-100 text-red-700' :
@@ -67,7 +71,7 @@
                             </span>
                         </td>
                         <td class="p-3 flex gap-2 flex-wrap">
-                            <button wire:click="openModal(true, {{ $user->id }})"
+                            <button wire:click="editUser({{ $user->id }})"
                                 class="px-3 py-1 rounded-xl text-xs bg-yellow-400 text-white shadow hover:bg-yellow-500">
                                 ✏️ Edit
                             </button>
@@ -142,6 +146,14 @@
                             </div>
 
                             <div>
+                                <label class="block mb-1 text-sm font-medium text-gray-600">Unit</label>
+                                <input type="text" wire:model="unit"
+                                    class="w-full border border-gray-300 rounded-xl p-2 text-sm focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition"
+                                    placeholder="Contoh: Fakultas Teknik, TU, Prodi Informatika">
+                                @error('unit') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                            </div>
+
+                            <div>
                                 <label class="block mb-1 text-sm font-medium text-gray-600">Password</label>
                                 <input type="password" wire:model="password"
                                     class="w-full border border-gray-300 rounded-xl p-2 text-sm focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition"
@@ -179,4 +191,3 @@
     @endif
 
 </div>
-
