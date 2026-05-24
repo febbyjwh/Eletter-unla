@@ -9,6 +9,7 @@ class Login extends Component
 {
     public $email;
     public $password;
+    public $remember = false;
 
     public function login()
     {
@@ -17,7 +18,7 @@ class Login extends Component
             'password' => $this->password,
         ];
     
-        if (Auth::attempt($credentials)) {
+        if (Auth::attempt($credentials, $this->remember)) {
             session()->regenerate();
             return redirect()->intended('/dashboard');
         }
